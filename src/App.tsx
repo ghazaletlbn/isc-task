@@ -1,11 +1,11 @@
-import {useState} from 'react';
+import { useUrlPagination } from './hooks/useUrlPagination';
 import {useGetItems} from './features/items/api/useGetItems';
 
 function App() {
-    const [skip, setSkip] = useState(0);
-    const take = 10;
-
+    const { skip, take,page, setPagination } = useUrlPagination(0, 10);
     const {data, isLoading, isError, isFetching} = useGetItems({skip, take});
+    const total = data?.total ?? 0;
+    const hasNextPage = skip + take < total;
 
     return (
         <div className="max-w-2xl mx-auto p-6">
@@ -19,9 +19,8 @@ function App() {
                 Items
             </h2>
 
-            {/* debug helper */}
             <div className="text-xs text-gray-500 mb-3">
-                skip: {skip} | take: {take}
+                page: {page}
             </div>
 
             {isLoading && (
@@ -51,7 +50,7 @@ function App() {
 
             <div className="flex gap-3 mt-6">
                 <button
-                    onClick={() => setSkip((p) => Math.max(0, p - take))}
+                    onClick={() => setPagination(skip - take, take)}
                     disabled={skip === 0}
                     className="px-4 py-2 rounded bg-gray-200 disabled:opacity-50"
                 >
@@ -59,8 +58,9 @@ function App() {
                 </button>
 
                 <button
-                    onClick={() => setSkip((p) => p + take)}
-                    className="px-4 py-2 rounded bg-blue-500 text-white"
+                    onClick={() => setPagination(skip + take, take)}
+                    disabled={!hasNextPage}
+                    className="px-4 py-2 rounded bg-blue-500 text-white disabled:opacity-50 disabled:bg-blue-300"
                 >
                     Next
                 </button>
