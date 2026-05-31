@@ -1,5 +1,5 @@
 export const UI_TEXTS = {
-  ITEMS_MANAGEMENT_TITLE: "Items List",
+  ITEMS_LIST_TITLE: "Items List",
   PAGINATION: {
     NEXT: "Next",
     PREVIOUS: "Previous",

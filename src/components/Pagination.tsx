@@ -1,54 +1,51 @@
 import { UI_TEXTS } from "../constants/dictionary.ts";
 
 interface PaginationProps {
-  currentPage: number;
+  page: number;
   pageCount: number;
   onNext: () => void;
   onPrevious: () => void;
-  canGoNext: boolean;
-  canGoPrevious: boolean;
 }
 
-const buttonClass =
-  "min-w-[120px] px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg " +
-  "disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors";
-
-function Pagination({
-  currentPage,
+export const Pagination = ({
+  page,
   pageCount,
   onNext,
   onPrevious,
-  canGoNext,
-  canGoPrevious,
-}: PaginationProps) {
+}: PaginationProps) => {
+  const isFirst = page <= 1;
+  const isLast = page >= pageCount;
+
+  const buttonBase =
+    "rounded border px-3 py-1 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const activeButton =
+    "border-gray-300 bg-white text-gray-700 hover:bg-gray-50";
+  const disabledButton =
+    "border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed";
+
   return (
-    <nav
-      aria-label="Pagination"
-      className="flex items-center justify-center gap-4 mt-6"
-    >
+    <nav aria-label="Pagination" className="flex items-center gap-3">
       <button
-        type="button"
-        className={buttonClass}
         onClick={onPrevious}
-        disabled={!canGoPrevious}
+        disabled={isFirst}
+        className={`${buttonBase} ${isFirst ? disabledButton : activeButton}`}
+        aria-label="Previous page"
       >
         {UI_TEXTS.PAGINATION.PREVIOUS}
       </button>
 
-      <span className="min-w-[110px] text-center text-sm font-medium text-gray-600">
-        {UI_TEXTS.PAGINATION.PAGE_STATUS(currentPage, pageCount)}
+      <span className="min-w-[7rem] text-center text-sm text-gray-600">
+        {UI_TEXTS.PAGINATION.PAGE_STATUS(page, pageCount)}
       </span>
 
       <button
-        type="button"
-        className={buttonClass}
         onClick={onNext}
-        disabled={!canGoNext}
+        disabled={isLast}
+        className={`${buttonBase} ${isLast ? disabledButton : activeButton}`}
+        aria-label="Next page"
       >
         {UI_TEXTS.PAGINATION.NEXT}
       </button>
     </nav>
   );
-}
-
-export default Pagination;
+};

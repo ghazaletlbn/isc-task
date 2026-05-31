@@ -2,46 +2,47 @@ import { useUrlPagination } from "../../hooks/useUrlPagination";
 import { useGetItems } from "./api/useGetItems";
 import ItemsTable from "./components/ItemsTable";
 import { UI_TEXTS } from "../../constants/dictionary";
-import { DEFAULT_PAGE_SIZE, DEFAULT_SKIP } from "../../constants/pagination";
-import Pagination from "../../components/Pagination.tsx";
+import { PageSizeSelector } from "../../components/PageSizeSelector.tsx";
+import { Pagination } from "../../components/Pagination.tsx";
 
-function ItemsPage() {
-  const { skip, take, page, goToNextPage, goToPreviousPage } = useUrlPagination(
-    DEFAULT_SKIP,
-    DEFAULT_PAGE_SIZE,
-  );
+export const ItemsPage = () => {
+  const { skip, take, page, goToNextPage, goToPreviousPage, setPageSize } =
+    useUrlPagination();
+
   const { data, isLoading, isError } = useGetItems({ skip, take });
 
   const total = data?.total ?? 0;
   const pageCount = Math.max(1, Math.ceil(total / take));
-  const canGoPrevious = skip > DEFAULT_SKIP;
-  const canGoNext = skip + take < total;
 
   if (isError) {
     return (
-      <div className="text-red-500 text-center mt-10 font-bold">
+      <div className="mt-10 text-center font-bold text-red-500">
         {UI_TEXTS.TABLE.ERROR}
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4">
-      <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">
-        {UI_TEXTS.ITEMS_MANAGEMENT_TITLE}
-      </h1>
-      <ItemsTable items={data?.data ?? []} isLoading={isLoading} />
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6">
+        <h1 className="mb-6 text-center text-xl font-semibold text-gray-800">
+          {UI_TEXTS.ITEMS_LIST_TITLE}
+        </h1>
 
-      <Pagination
-        currentPage={page}
-        pageCount={pageCount}
-        onNext={goToNextPage}
-        onPrevious={goToPreviousPage}
-        canGoNext={canGoNext}
-        canGoPrevious={canGoPrevious}
-      />
+        <ItemsTable items={data?.data ?? []} isLoading={isLoading} />
+      </main>
+
+      <footer className="sticky bottom-0 z-10 border-t border-gray-200 bg-white">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-3 px-4 py-3 sm:flex-row sm:justify-between">
+          <PageSizeSelector value={take} onChange={setPageSize} />
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            onNext={goToNextPage}
+            onPrevious={goToPreviousPage}
+          />
+        </div>
+      </footer>
     </div>
   );
-}
-
-export default ItemsPage;
+};
