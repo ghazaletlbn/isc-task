@@ -12,8 +12,14 @@ export const UI_TEXTS = {
       ITEM: "Item",
       DATE: "Creation Date",
     },
-    LOADING: "Loading data...",
     EMPTY: "No data found.",
-    ERROR: "Error fetching data!",
+    ERROR: "Something went wrong while loading items.",
+    RETRY: "Retry",
+    RETRYING: "Retrying...",
+  },
+  STATUS: {
+    LOADING: "Loading items, please wait.",
+    UPDATING: "Updating items.",
+    ERROR: "Failed to load items.",
   },
 } as const;
