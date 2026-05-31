@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   DEFAULT_PAGE_SIZE,
@@ -24,32 +23,21 @@ export const useUrlPagination = (defaultTake: number = DEFAULT_PAGE_SIZE) => {
 
   const page = Math.floor(skip / take) + 1;
 
-  const setPagination = useCallback(
-    (newSkip: number, newTake: number) => {
-      setSearchParams((prevParams) => {
-        const params = new URLSearchParams(prevParams);
-        params.set("skip", String(Math.max(DEFAULT_SKIP, newSkip)));
-        params.set("take", String(newTake));
-        return params;
-      });
-    },
-    [setSearchParams],
-  );
+  const setPagination = (newSkip: number, newTake: number) => {
+    setSearchParams((prevParams) => {
+      const params = new URLSearchParams(prevParams);
+      params.set("skip", String(Math.max(DEFAULT_SKIP, newSkip)));
+      params.set("take", String(newTake));
+      return params;
+    });
+  };
 
-  const goToNextPage = useCallback(
-    () => setPagination(skip + take, take),
-    [skip, take, setPagination],
-  );
+  const goToNextPage = () => setPagination(skip + take, take);
 
-  const goToPreviousPage = useCallback(
-    () => setPagination(Math.max(DEFAULT_SKIP, skip - take), take),
-    [skip, take, setPagination],
-  );
+  const goToPreviousPage = () =>
+    setPagination(Math.max(DEFAULT_SKIP, skip - take), take);
 
-  const setPageSize = useCallback(
-    (newTake: number) => setPagination(DEFAULT_SKIP, newTake),
-    [setPagination],
-  );
+  const setPageSize = (newTake: number) => setPagination(DEFAULT_SKIP, newTake);
 
   return { skip, take, page, goToNextPage, goToPreviousPage, setPageSize };
 };
