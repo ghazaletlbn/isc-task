@@ -5,6 +5,7 @@ interface PaginationProps {
   pageCount: number;
   onNext: () => void;
   onPrevious: () => void;
+  disabled?: boolean;
 }
 
 export const Pagination = ({
@@ -12,9 +13,10 @@ export const Pagination = ({
   pageCount,
   onNext,
   onPrevious,
+  disabled = false,
 }: PaginationProps) => {
-  const isFirst = page <= 1;
-  const isLast = page >= pageCount;
+  const isFirst = disabled || page <= 1;
+  const isLast = disabled || page >= pageCount;
 
   const buttonBase =
     "rounded border px-3 py-1 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500";
@@ -26,6 +28,7 @@ export const Pagination = ({
   return (
     <nav aria-label="Pagination" className="flex items-center gap-3">
       <button
+        type="button"
         onClick={onPrevious}
         disabled={isFirst}
         className={`${buttonBase} ${isFirst ? disabledButton : activeButton}`}
@@ -39,6 +42,7 @@ export const Pagination = ({
       </span>
 
       <button
+        type="button"
         onClick={onNext}
         disabled={isLast}
         className={`${buttonBase} ${isLast ? disabledButton : activeButton}`}
