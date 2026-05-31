@@ -10,7 +10,9 @@ function ItemRow({ item }: ItemRowProps) {
     <tr className="divide-x divide-gray-200 hover:bg-gray-50 transition-colors">
       <td className="px-6 py-4">
         <div className="font-semibold text-gray-900">{item.title}</div>
-        <div className="text-sm text-gray-500 mt-0.5">{item.description}</div>
+        <div className="line-clamp-2 text-sm text-gray-500 mt-0.5">
+          {item.description}
+        </div>
       </td>
       <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap tabular-nums align-middle">
         {formatDateToJalali(item.createdAt)}
