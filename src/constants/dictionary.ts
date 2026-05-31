@@ -3,6 +3,7 @@ export const UI_TEXTS = {
   PAGINATION: {
     NEXT: "Next",
     PREVIOUS: "Previous",
+    ROWS_PER_PAGE: "Rows per page:",
     PAGE_STATUS: (page: number, pageCount: number) =>
       `Page ${page} of ${pageCount}`,
   },
