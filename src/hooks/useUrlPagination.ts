@@ -1,22 +1,26 @@
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { DEFAULT_SKIP } from "../constants/pagination.ts";
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SKIP,
+  isValidPageSize,
+} from "../constants/pagination.ts";
 
-const parseSkip = (value: string | null, fallback: number) => {
+const parseSkip = (value: string | null, take: number) => {
   const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+  if (!Number.isInteger(parsed) || parsed < 0) return DEFAULT_SKIP;
+  return Math.floor(parsed / take) * take;
 };
-
 const parseTake = (value: string | null, fallback: number) => {
   const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+  return isValidPageSize(parsed) ? parsed : fallback;
 };
 
-export const useUrlPagination = (defaultSkip = 0, defaultTake = 10) => {
+export const useUrlPagination = (defaultTake: number = DEFAULT_PAGE_SIZE) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const skip = parseSkip(searchParams.get("skip"), defaultSkip);
   const take = parseTake(searchParams.get("take"), defaultTake);
+  const skip = parseSkip(searchParams.get("skip"), take);
 
   const page = Math.floor(skip / take) + 1;
 
@@ -24,8 +28,8 @@ export const useUrlPagination = (defaultSkip = 0, defaultTake = 10) => {
     (newSkip: number, newTake: number) => {
       setSearchParams((prevParams) => {
         const params = new URLSearchParams(prevParams);
-        params.set("skip", String(Math.max(0, newSkip)));
-        params.set("take", String(Math.max(1, newTake)));
+        params.set("skip", String(Math.max(DEFAULT_SKIP, newSkip)));
+        params.set("take", String(newTake));
         return params;
       });
     },
@@ -42,11 +46,10 @@ export const useUrlPagination = (defaultSkip = 0, defaultTake = 10) => {
     [skip, take, setPagination],
   );
 
-  return {
-    skip,
-    take,
-    page,
-    goToNextPage,
-    goToPreviousPage,
-  };
+  const setPageSize = useCallback(
+    (newTake: number) => setPagination(DEFAULT_SKIP, newTake),
+    [setPagination],
+  );
+
+  return { skip, take, page, goToNextPage, goToPreviousPage, setPageSize };
 };
